@@ -5,7 +5,7 @@
 
 */
 -- DropTable
-DROP TABLE `Controller`;
+DROP TABLE IF EXISTS `Controller`;
 
 -- CreateTable
 CREATE TABLE `Users` (

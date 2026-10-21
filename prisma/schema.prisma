@@ -20,11 +20,11 @@ model Users {
 }
 
 model Products {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(256)
-  price       Int
-  path        String   @db.VarChar(256)
-  category    String   @db.VarChar(256)
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(256)
+  price      Int
+  path       String   @db.VarChar(256)
+  category   String   @db.VarChar(256)
   created_at DateTime
-  updated_at  DateTime
+  updated_at DateTime
 }
