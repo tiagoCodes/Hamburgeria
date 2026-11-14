@@ -13,10 +13,11 @@ datasource db {
 }
 
 model Users {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(256)
-  email    String @unique @db.VarChar(256)
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(256)
+  email    String  @unique @db.VarChar(256)
   password String
+  admin    Boolean @default(false)
 }
 
 model Products {
@@ -28,3 +29,5 @@ model Products {
   created_at DateTime
   updated_at DateTime
 }
+
+// npx prisma migrate dev --name add_display_name

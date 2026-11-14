@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import prisma from '../db.js'
+import prisma from '../Config/db.js'
 import jwt from 'jsonwebtoken'
 import * as yup from 'yup'
 
@@ -20,7 +20,7 @@ export class authCadastro {
                 email: yup.string().email().required(),
                 password: yup.string().min(6).required(),
             })
-            await userSchema.validate(user, { abortEarly: false, strict: true })
+            await userSchema.validate(user, { abortEarly: false, strict: true }) //Com strict: true, o Yup não converte nem transforma os valores antes de validá-los. (assincrono)
 
             // verifica se o cadastro ja existe no banco de dados
             const emailValid = await prisma.users.findUnique({
@@ -42,6 +42,7 @@ export class authCadastro {
                     name: user.name,
                     email: user.email,
                     password: hashPassword,
+                    admin: false,
                 },
             })
             res.status(201).json(cadastro)
@@ -82,15 +83,38 @@ export class authLogin {
                 return res.status(404).json('Email or Password invalid')
             }
             // gera um token
-            const token = jwt.sign({ id: login.id }, JWT_SECRET, { expiresIn: '5m' })
+            const token = jwt.sign({ id: login.id }, JWT_SECRET, { expiresIn: '30m' })
 
             res.status(201).json(token)
         } catch (error) {
-            if(error instanceof yup.ValidationError){
-                return res.status(400).json({mensagem: error.errors})
+            if (error instanceof yup.ValidationError) {
+                return res.status(400).json({ mensagem: error.errors })
             }
             console.log(error)
             res.status(500).json('Error in Server')
+        }
+    }
+}
+
+export class authListen {
+    async index(req, res) {
+        try {
+            const listenUsers = await prisma.users.findMany({
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    admin: true,
+                },
+            })
+            if (listenUsers.length === 0) {
+                return res.status(204).end()
+            }
+
+            return res.status(200).json(listenUsers)
+        } catch (error) {
+            console.error(error)
+            return res.status(500).json({ mensagem: 'Erro no servidor' })
         }
     }
 }
