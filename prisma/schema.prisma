@@ -30,4 +30,8 @@ model Products {
   updated_at DateTime
 }
 
+model Category {
+  name String @unique @db.VarChar(256)
+}
+
 // npx prisma migrate dev --name add_display_name
